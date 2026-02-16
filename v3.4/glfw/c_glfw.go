@@ -13,5 +13,7 @@ package glfw
 #include "glfw/src/null_window.c"
 #include "glfw/src/window.c"
 #include "glfw/src/osmesa_context.c"
+
+extern int glfwGetPlatform(void);
 */
 import "C"

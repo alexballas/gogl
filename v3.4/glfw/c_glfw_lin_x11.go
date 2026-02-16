@@ -1,5 +1,5 @@
-//go:build (linux && !wayland) || (linux && x11)
-// +build linux,!wayland linux,x11
+//go:build (linux && !x11 && !wayland) || (linux && x11)
+// +build linux,!x11,!wayland linux,x11
 
 package glfw
 

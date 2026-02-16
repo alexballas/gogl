@@ -28,9 +28,14 @@ package glfw
 // Linux Build Tags
 // ----------------
 // GLFW Options:
-#cgo linux,!wayland CFLAGS: -D_GLFW_X11
-#cgo linux,x11 CFLAGS: -D_GLFW_X11
-#cgo linux,wayland CFLAGS: -D_GLFW_WAYLAND
+// Default (no tags): both X11 and Wayland enabled
+// -tags x11: X11 only
+// -tags wayland: Wayland only
+// -tags x11,wayland: both enabled (explicit)
+#cgo linux,!x11,!wayland CFLAGS: -D_GLFW_X11 -D_GLFW_WAYLAND
+#cgo linux,x11,!wayland CFLAGS: -D_GLFW_X11
+#cgo linux,!x11,wayland CFLAGS: -D_GLFW_WAYLAND
+#cgo linux,x11,wayland CFLAGS: -D_GLFW_X11 -D_GLFW_WAYLAND
 
 // Linker Options:
 #cgo linux,!gles1,!gles2,!gles3,!vulkan LDFLAGS: -lGL
@@ -38,8 +43,11 @@ package glfw
 #cgo linux,gles2 LDFLAGS: -lGLESv2
 #cgo linux,gles3 LDFLAGS: -lGLESv3
 #cgo linux,vulkan LDFLAGS: -lvulkan
-#cgo linux,!wayland LDFLAGS: -lX11 -lXrandr -lXxf86vm -lXi -lXcursor -lm -lXinerama -ldl -lrt
+// X11 libraries (included when x11 tag is set or no display tags set)
+#cgo linux,!x11,!wayland LDFLAGS: -lX11 -lXrandr -lXxf86vm -lXi -lXcursor -lm -lXinerama -ldl -lrt
 #cgo linux,x11 LDFLAGS: -lX11 -lXrandr -lXxf86vm -lXi -lXcursor -lm -lXinerama -ldl -lrt
+// Wayland libraries (included when wayland tag is set or no display tags set)
+#cgo linux,!x11,!wayland LDFLAGS: -lwayland-client -lwayland-cursor -lwayland-egl -lxkbcommon -lm -ldl -lrt
 #cgo linux,wayland LDFLAGS: -lwayland-client -lwayland-cursor -lwayland-egl -lxkbcommon -lm -ldl -lrt
 
 // BSD Build Tags
