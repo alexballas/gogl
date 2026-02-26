@@ -74,6 +74,9 @@ const (
 	TransparentFramebuffer Hint = C.GLFW_TRANSPARENT_FRAMEBUFFER // Specifies whether the framebuffer should be transparent.
 	FocusOnShow            Hint = C.GLFW_FOCUS_ON_SHOW           // Specifies whether the window will be given input focus when glfwShowWindow is called.
 	ScaleToMonitor         Hint = C.GLFW_SCALE_TO_MONITOR        // Specified whether the window content area should be resized based on the monitor content scale of any monitor it is placed on. This includes the initial placement when the window is created.
+	MousePassthrough       Hint = C.GLFW_MOUSE_PASSTHROUGH       // Specifies whether the window is transparent to mouse input, letting any mouse events pass through to whatever window is behind it.
+	PositionX              Hint = C.GLFW_POSITION_X              // Specifies the desired x-coordinate of the upper-left corner of the content area of the window.
+	PositionY              Hint = C.GLFW_POSITION_Y              // Specifies the desired y-coordinate of the upper-left corner of the content area of the window.
 )
 
 // Context related hints.
@@ -87,6 +90,7 @@ const (
 	OpenGLDebugContext      Hint = C.GLFW_OPENGL_DEBUG_CONTEXT     // Specifies whether to create a debug OpenGL context, which may have additional error and performance issue reporting functionality. If OpenGL ES is requested, this hint is ignored.
 	OpenGLProfile           Hint = C.GLFW_OPENGL_PROFILE           // Specifies which OpenGL profile to create the context for. Hard constraint.
 	ContextCreationAPI      Hint = C.GLFW_CONTEXT_CREATION_API     // Specifies which context creation API to use to create the context.
+	AnglePlatformType       Hint = C.GLFW_ANGLE_PLATFORM_TYPE      // Specifies the platform type (rendering backend) to request when using OpenGL ES and EGL via ANGLE.
 )
 
 // Framebuffer related hints.
@@ -98,6 +102,7 @@ const (
 	AlphaBits              Hint = C.GLFW_ALPHA_BITS               // Specifies the desired bit depth of the default framebuffer.
 	DepthBits              Hint = C.GLFW_DEPTH_BITS               // Specifies the desired bit depth of the default framebuffer.
 	StencilBits            Hint = C.GLFW_STENCIL_BITS             // Specifies the desired bit depth of the default framebuffer.
+	ScaleFramebuffer       Hint = C.GLFW_SCALE_FRAMEBUFFER        // Specifies whether the framebuffer should be resized based on the monitor content scale.
 	AccumRedBits           Hint = C.GLFW_ACCUM_RED_BITS           // Specifies the desired bit depth of the accumulation buffer.
 	AccumGreenBits         Hint = C.GLFW_ACCUM_GREEN_BITS         // Specifies the desired bit depth of the accumulation buffer.
 	AccumBlueBits          Hint = C.GLFW_ACCUM_BLUE_BITS          // Specifies the desired bit depth of the accumulation buffer.

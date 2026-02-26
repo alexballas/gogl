@@ -284,6 +284,13 @@ const (
 	HandCursor      StandardCursor = C.GLFW_HAND_CURSOR
 	HResizeCursor   StandardCursor = C.GLFW_HRESIZE_CURSOR
 	VResizeCursor   StandardCursor = C.GLFW_VRESIZE_CURSOR
+	PointingHandCursor StandardCursor = C.GLFW_POINTING_HAND_CURSOR
+	ResizeEWCursor     StandardCursor = C.GLFW_RESIZE_EW_CURSOR
+	ResizeNSCursor     StandardCursor = C.GLFW_RESIZE_NS_CURSOR
+	ResizeNWSECursor   StandardCursor = C.GLFW_RESIZE_NWSE_CURSOR
+	ResizeNESWCursor   StandardCursor = C.GLFW_RESIZE_NESW_CURSOR
+	ResizeAllCursor    StandardCursor = C.GLFW_RESIZE_ALL_CURSOR
+	NotAllowedCursor   StandardCursor = C.GLFW_NOT_ALLOWED_CURSOR
 )
 
 // Action corresponds to a key or button action.
