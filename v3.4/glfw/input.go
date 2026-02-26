@@ -278,12 +278,12 @@ type StandardCursor int
 
 // Standard cursors
 const (
-	ArrowCursor     StandardCursor = C.GLFW_ARROW_CURSOR
-	IBeamCursor     StandardCursor = C.GLFW_IBEAM_CURSOR
-	CrosshairCursor StandardCursor = C.GLFW_CROSSHAIR_CURSOR
-	HandCursor      StandardCursor = C.GLFW_HAND_CURSOR
-	HResizeCursor   StandardCursor = C.GLFW_HRESIZE_CURSOR
-	VResizeCursor   StandardCursor = C.GLFW_VRESIZE_CURSOR
+	ArrowCursor        StandardCursor = C.GLFW_ARROW_CURSOR
+	IBeamCursor        StandardCursor = C.GLFW_IBEAM_CURSOR
+	CrosshairCursor    StandardCursor = C.GLFW_CROSSHAIR_CURSOR
+	HandCursor         StandardCursor = C.GLFW_HAND_CURSOR
+	HResizeCursor      StandardCursor = C.GLFW_HRESIZE_CURSOR
+	VResizeCursor      StandardCursor = C.GLFW_VRESIZE_CURSOR
 	PointingHandCursor StandardCursor = C.GLFW_POINTING_HAND_CURSOR
 	ResizeEWCursor     StandardCursor = C.GLFW_RESIZE_EW_CURSOR
 	ResizeNSCursor     StandardCursor = C.GLFW_RESIZE_NS_CURSOR
@@ -399,6 +399,11 @@ func (w *Window) GetInputMode(mode InputMode) int {
 // SetInputMode sets an input option for the window.
 func (w *Window) SetInputMode(mode InputMode, value int) {
 	C.glfwSetInputMode(w.data, C.int(mode), C.int(value))
+	if mode == CursorMode || mode == RawMouseMotion {
+		if err := acceptError(featureUnavailable, featureUnimplemented); err != nil {
+			return
+		}
+	}
 	panicError()
 }
 
@@ -487,6 +492,9 @@ func (w *Window) GetCursorPos() (x, y float64) {
 // unbounded and limited only by the minimum and maximum values of a double.
 func (w *Window) SetCursorPos(xpos, ypos float64) {
 	C.glfwSetCursorPos(w.data, C.double(xpos), C.double(ypos))
+	if err := acceptError(featureUnavailable); err != nil {
+		return
+	}
 	panicError()
 }
 

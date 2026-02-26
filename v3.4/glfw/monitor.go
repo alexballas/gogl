@@ -223,6 +223,9 @@ func (m *Monitor) GetVideoMode() *VidMode {
 // SetGamma with it.
 func (m *Monitor) SetGamma(gamma float32) {
 	C.glfwSetGamma(m.data, C.float(gamma))
+	if err := acceptError(featureUnavailable); err != nil {
+		return
+	}
 	panicError()
 }
 
@@ -231,10 +234,11 @@ func (m *Monitor) GetGammaRamp() *GammaRamp {
 	var ramp GammaRamp
 
 	rampC := C.glfwGetGammaRamp(m.data)
-	panicError()
 	if rampC == nil {
+		acceptError(featureUnavailable)
 		return nil
 	}
+	panicError()
 
 	length := int(rampC.size)
 	ramp.Red = make([]uint16, length)
@@ -263,5 +267,8 @@ func (m *Monitor) SetGammaRamp(ramp *GammaRamp) {
 	}
 
 	C.glfwSetGammaRamp(m.data, &rampC)
+	if err := acceptError(featureUnavailable); err != nil {
+		return
+	}
 	panicError()
 }

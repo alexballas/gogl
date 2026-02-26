@@ -17,15 +17,15 @@ type ErrorCode int
 // Error codes that are translated to panics and the programmer should not
 // expect to handle.
 const (
-	notInitialized   ErrorCode = C.GLFW_NOT_INITIALIZED    // GLFW has not been initialized.
-	noCurrentContext ErrorCode = C.GLFW_NO_CURRENT_CONTEXT // No context is current.
-	invalidEnum      ErrorCode = C.GLFW_INVALID_ENUM       // One of the enum parameters for the function was given an invalid enum.
-	invalidValue     ErrorCode = C.GLFW_INVALID_VALUE      // One of the parameters for the function was given an invalid value.
-	outOfMemory      ErrorCode = C.GLFW_OUT_OF_MEMORY      // A memory allocation failed.
-	platformError    ErrorCode = C.GLFW_PLATFORM_ERROR     // A platform-specific error occurred that does not match any of the more specific categories.
-	noWindowContext  ErrorCode = C.GLFW_NO_WINDOW_CONTEXT  // A window that does not have an OpenGL or OpenGL ES context was passed to a function that requires it to have one.
-	featureUnavailable   ErrorCode = C.GLFW_FEATURE_UNAVAILABLE    // The requested feature is not provided by the platform.
-	featureUnimplemented ErrorCode = C.GLFW_FEATURE_UNIMPLEMENTED  // The requested feature is not implemented for the platform.
+	notInitialized       ErrorCode = C.GLFW_NOT_INITIALIZED       // GLFW has not been initialized.
+	noCurrentContext     ErrorCode = C.GLFW_NO_CURRENT_CONTEXT    // No context is current.
+	invalidEnum          ErrorCode = C.GLFW_INVALID_ENUM          // One of the enum parameters for the function was given an invalid enum.
+	invalidValue         ErrorCode = C.GLFW_INVALID_VALUE         // One of the parameters for the function was given an invalid value.
+	outOfMemory          ErrorCode = C.GLFW_OUT_OF_MEMORY         // A memory allocation failed.
+	platformError        ErrorCode = C.GLFW_PLATFORM_ERROR        // A platform-specific error occurred that does not match any of the more specific categories.
+	noWindowContext      ErrorCode = C.GLFW_NO_WINDOW_CONTEXT     // A window that does not have an OpenGL or OpenGL ES context was passed to a function that requires it to have one.
+	featureUnavailable   ErrorCode = C.GLFW_FEATURE_UNAVAILABLE   // The requested feature is not provided by the platform.
+	featureUnimplemented ErrorCode = C.GLFW_FEATURE_UNIMPLEMENTED // The requested feature is not implemented for the platform.
 )
 
 const (
@@ -176,7 +176,7 @@ func acceptError(codes ...ErrorCode) error {
 	// caller should have accepted it. This is effectively a bug in this
 	// package.
 	switch err.Code {
-	case platformError, featureUnavailable, featureUnimplemented:
+	case platformError:
 		log.Println(err)
 		return nil
 	case notInitialized, noCurrentContext, invalidEnum, invalidValue, outOfMemory, noWindowContext:

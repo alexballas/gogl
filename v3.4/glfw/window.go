@@ -411,14 +411,6 @@ func (w *Window) SetTitle(title string) {
 // The desired image sizes varies depending on platform and system settings. The selected
 // images will be rescaled as needed. Good sizes include 16x16, 32x32 and 48x48.
 func (w *Window) SetIcon(images []image.Image) {
-	platform := C.glfwGetPlatform()
-	if platform == C.GLFW_PLATFORM_WAYLAND {
-		println("warning: Wayland: The platform does not support setting the window icon")
-		return
-	}
-	if platform == 0 {
-		return
-	}
 	count := len(images)
 	cimages := make([]C.GLFWimage, count)
 	freePixels := make([]func(), count)
@@ -437,6 +429,9 @@ func (w *Window) SetIcon(images []image.Image) {
 		v()
 	}
 
+	if err := acceptError(featureUnavailable, featureUnimplemented); err != nil {
+		return
+	}
 	panicError()
 }
 
@@ -445,6 +440,9 @@ func (w *Window) SetIcon(images []image.Image) {
 func (w *Window) GetPos() (x, y int) {
 	var xpos, ypos C.int
 	C.glfwGetWindowPos(w.data, &xpos, &ypos)
+	if err := acceptError(featureUnavailable); err != nil {
+		return int(xpos), int(ypos)
+	}
 	panicError()
 	return int(xpos), int(ypos)
 }
@@ -465,6 +463,9 @@ func (w *Window) GetPos() (x, y int) {
 // This function may only be called from the main thread.
 func (w *Window) SetPos(xpos, ypos int) {
 	C.glfwSetWindowPos(w.data, C.int(xpos), C.int(ypos))
+	if err := acceptError(featureUnavailable); err != nil {
+		return
+	}
 	panicError()
 }
 
@@ -576,6 +577,10 @@ func (w *Window) GetOpacity() float32 {
 // This function may only be called from the main thread.
 func (w *Window) SetOpacity(opacity float32) {
 	C.glfwSetWindowOpacity(w.data, C.float(opacity))
+	if err := acceptError(featureUnavailable); err != nil {
+		return
+	}
+	panicError()
 }
 
 // RequestWindowAttention funciton requests user attention to the specified
@@ -708,6 +713,12 @@ func (w *Window) GetAttrib(attrib Hint) int {
 // This function may only be called from the main thread.
 func (w *Window) SetAttrib(attrib Hint, value int) {
 	C.glfwSetWindowAttrib(w.data, C.int(attrib), C.int(value))
+	if attrib == Floating {
+		if err := acceptError(featureUnavailable); err != nil {
+			return
+		}
+	}
+	panicError()
 }
 
 // SetUserPointer sets the user-defined pointer of the window. The current value
