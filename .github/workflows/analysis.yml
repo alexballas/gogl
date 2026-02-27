@@ -6,6 +6,10 @@ permissions:
 jobs:
   static_analysis:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        module-dir: ['v3.3/glfw', 'v3.4/glfw']
 
     steps:
     - uses: actions/checkout@v4
@@ -25,16 +29,16 @@ jobs:
 
     - name: Vet
       run: |
-        cd v3.3/glfw && go vet ./...
+        cd "${{ matrix.module-dir }}" && go vet ./...
 
     - name: Formatting
       run: |
-        cd v3.3/glfw && test -z "$(gofmt -e -d . | tee /dev/stderr)"
+        cd "${{ matrix.module-dir }}" && test -z "$(gofmt -e -d . | tee /dev/stderr)"
 
     - name: Gocyclo
       run: |
-        cd v3.3/glfw && gocyclo -over 30 .
+        cd "${{ matrix.module-dir }}" && gocyclo -over 30 .
 
     - name: Staticcheck
       run: |
-        cd v3.3/glfw && staticcheck ./...
+        cd "${{ matrix.module-dir }}" && staticcheck ./...

@@ -1,58 +1,118 @@
-#!/bin/env bash
+#!/usr/bin/env bash
 
-EXEC=$0;
+# Generate vendored GLFW C sources for a specific go-gl target directory.
+# Example:
+#   scripts/generate-buildable-source-code.sh v3.4 "$(cat v3.4/glfw/GLFW_C_REVISION.txt)"
 
-function usage() {
-    echo "usage: $EXEC <glfw_tag_name>";
-    exit $1;
+set -euo pipefail
+
+EXEC="$0"
+
+usage() {
+    echo "usage: $EXEC <go_gl_target_dir> <glfw_revision>"
+    exit "$1"
 }
 
-TAG_NAME=$1;
-
-if [ "x$TAG_NAME" = "x" ]; then
-    usage 1;
+TARGET_DIR="${1:-}"
+GLFW_REVISION="${2:-}"
+if [ -z "$TARGET_DIR" ] || [ -z "$GLFW_REVISION" ]; then
+    usage 1
 fi
 
-IFS='.' read -a TAG_PARTS <<< "$TAG_NAME"
-TAG_DIR="v${TAG_PARTS[0]}.${TAG_PARTS[1]}"
-echo TAG_DIR
-echo $TAG_DIR
+TMP_DIR="$(mktemp -d)"
+cleanup() {
+    rm -rf "$TMP_DIR"
+}
+trap cleanup EXIT
 
-CMD="mktemp -d";
-TMP_DIR=$($CMD);
-EXIT_CODE=$?;
-if [ $EXIT_CODE != 0 ]; then
-    echo "$EXEC: \"$CMD\" failed to execute. exiting..." > /dev/stderr;
-    exit 1;
-fi
+generate_dummy_go_files() {
+    local glfw_root="$1"
+    local deps_import_root="$2"
 
-pushd "$TMP_DIR";
+    find "$glfw_root/deps" "$glfw_root/include" "$glfw_root/src" -type d -print0 |
+        while IFS= read -r -d $'\0' d; do
+            cat > "$d"/dummy.go <<'EOF'
+//go:build required
+// +build required
 
-git clone --depth 1 --branch "$TAG_NAME" https://github.com/glfw/glfw.git
-mkdir glfw/build
-cd glfw/build
-cmake ..
-# TODO don't use this hacky way to generate the wayland protocol headers
-make -f src/CMakeFiles/glfw.dir/build.make src/CMakeFiles/glfw.dir/depend # generates required header files in build process
-BUILD_DIR=../../glfw-aggregate
-mkdir "$BUILD_DIR"
-mkdir "$BUILD_DIR/include"
-cp src/*.h "$BUILD_DIR/include"
+// Package dummy prevents go tooling from stripping the c dependencies.
+package dummy
+EOF
+        done
 
-cd ..
-BUILD_DIR="./build/$BUILD_DIR"
+    {
+        cat <<'EOF'
+//go:build required
+// +build required
 
-cp -r src "$BUILD_DIR/src"
-cp -r include/* "$BUILD_DIR/include"
-cp -r deps "$BUILD_DIR/deps"
-cp LICENSE.md "$BUILD_DIR/LICENSE.md"
-# TODO generate dummy.go files
+// Package dummy prevents go tooling from stripping the c dependencies.
+package dummy
+EOF
+        echo
+        echo "import ("
+        find "$glfw_root/deps" -mindepth 1 -maxdepth 1 -type d | sort |
+            while IFS= read -r dep_dir; do
+                dep_name="$(basename "$dep_dir")"
+                echo "	_ \"$deps_import_root/$dep_name\""
+            done
+        echo ")"
+    } > "$glfw_root/deps/dummy.go"
+}
 
-popd;
-BUILD_DIR="$TMP_DIR/glfw/$BUILD_DIR"
+generate_wayland_protocol_headers() {
+    local upstream_root="$1"
+    local include_dir="$2"
+    local scanner
 
-GLFW_DIR="$TAG_DIR/glfw/glfw"
+    scanner="$(command -v wayland-scanner || true)"
+    if [ -z "$scanner" ]; then
+        echo "$EXEC: wayland-scanner is required but was not found in PATH" >&2
+        exit 1
+    fi
+
+    local protocol_files=(
+        wayland.xml
+        viewporter.xml
+        xdg-shell.xml
+        idle-inhibit-unstable-v1.xml
+        pointer-constraints-unstable-v1.xml
+        relative-pointer-unstable-v1.xml
+        fractional-scale-v1.xml
+        xdg-activation-v1.xml
+        xdg-decoration-unstable-v1.xml
+    )
+
+    for protocol in "${protocol_files[@]}"; do
+        local protocol_path="$upstream_root/deps/wayland/$protocol"
+        local protocol_base="${protocol%.xml}"
+
+        "$scanner" client-header "$protocol_path" \
+            "$include_dir/${protocol_base}-client-protocol.h"
+        "$scanner" private-code "$protocol_path" \
+            "$include_dir/${protocol_base}-client-protocol-code.h"
+    done
+}
+
+WORK_DIR="$TMP_DIR/work"
+UPSTREAM_SRC="$WORK_DIR/glfw-src"
+AGGREGATE_DIR="$WORK_DIR/glfw-aggregate"
+
+mkdir -p "$UPSTREAM_SRC"
+curl -fsSL "https://github.com/glfw/glfw/archive/${GLFW_REVISION}.tar.gz" |
+    tar xz --strip-components=1 --directory="$UPSTREAM_SRC"
+mkdir -p "$AGGREGATE_DIR/include"
+
+cp -r "$UPSTREAM_SRC/src" "$AGGREGATE_DIR/src"
+cp -r "$UPSTREAM_SRC/include/"* "$AGGREGATE_DIR/include"
+cp -r "$UPSTREAM_SRC/deps" "$AGGREGATE_DIR/deps"
+cp "$UPSTREAM_SRC/LICENSE.md" "$AGGREGATE_DIR/LICENSE.md"
+generate_wayland_protocol_headers "$UPSTREAM_SRC" "$AGGREGATE_DIR/include"
+
+# Keep parity with files historically excluded in go-gl vendoring scripts.
+rm -f "$AGGREGATE_DIR"/src/CMakeLists.txt "$AGGREGATE_DIR"/src/*.in
+
+GLFW_DIR="$TARGET_DIR/glfw/glfw"
 rm -rf "$GLFW_DIR"
-mv "$BUILD_DIR" "$GLFW_DIR"
+mv "$AGGREGATE_DIR" "$GLFW_DIR"
 
-rm -rf "$TMP_DIR";
+generate_dummy_go_files "$GLFW_DIR" "github.com/go-gl/glfw/$TARGET_DIR/glfw/glfw/deps"
