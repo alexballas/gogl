@@ -81,8 +81,8 @@ func GetPhysicalDevicePresentationSupport(instance, device interface{}, queueFam
 		(C.VkPhysicalDevice)(unsafe.Pointer(deviceValue.Pointer())),
 		C.uint32_t(queueFamily),
 	))
-	if err := acceptError(APIUnavailable); err != nil {
-		return false, err
+	if acceptErr := acceptError(APIUnavailable); acceptErr != nil {
+		return false, acceptErr
 	}
 	panicError()
 	return supported, nil
