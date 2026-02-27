@@ -320,6 +320,7 @@ const (
 	CursorNormal   int = C.GLFW_CURSOR_NORMAL
 	CursorHidden   int = C.GLFW_CURSOR_HIDDEN
 	CursorDisabled int = C.GLFW_CURSOR_DISABLED
+	CursorCaptured int = C.GLFW_CURSOR_CAPTURED
 )
 
 // Cursor represents a cursor.
@@ -524,6 +525,13 @@ func CreateCursor(img image.Image, xhot, yhot int) *Cursor {
 // that can be set for a window with SetCursor.
 func CreateStandardCursor(shape StandardCursor) *Cursor {
 	c := C.glfwCreateStandardCursor(C.int(shape))
+	if c == nil {
+		if err := acceptError(CursorUnavailable); err != nil {
+			return nil
+		}
+		panicError()
+		return nil
+	}
 	panicError()
 	return &Cursor{c}
 }

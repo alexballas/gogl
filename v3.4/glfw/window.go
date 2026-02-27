@@ -95,6 +95,7 @@ const (
 	ContextVersionMinor     Hint = C.GLFW_CONTEXT_VERSION_MINOR    // Specifies the client API version that the created context must be compatible with.
 	ContextRobustness       Hint = C.GLFW_CONTEXT_ROBUSTNESS       // Specifies the robustness strategy to be used by the context.
 	ContextReleaseBehavior  Hint = C.GLFW_CONTEXT_RELEASE_BEHAVIOR // Specifies the release behavior to be used by the context.
+	ContextNoError          Hint = C.GLFW_CONTEXT_NO_ERROR         // Specifies whether the context should suppress generation of errors.
 	OpenGLForwardCompatible Hint = C.GLFW_OPENGL_FORWARD_COMPAT    // Specifies whether the OpenGL context should be forward-compatible. Hard constraint.
 	OpenGLDebugContext      Hint = C.GLFW_OPENGL_DEBUG_CONTEXT     // Specifies whether to create a debug OpenGL context, which may have additional error and performance issue reporting functionality. If OpenGL ES is requested, this hint is ignored.
 	OpenGLProfile           Hint = C.GLFW_OPENGL_PROFILE           // Specifies which OpenGL profile to create the context for. Hard constraint.
@@ -200,6 +201,10 @@ const (
 	True     int = 1 // GL_TRUE
 	False    int = 0 // GL_FALSE
 	DontCare int = C.GLFW_DONT_CARE
+
+	// AnyPosition is a hint value for PositionX and PositionY that lets the
+	// window manager decide the initial window position.
+	AnyPosition int = C.GLFW_ANY_POSITION
 )
 
 // Window represents a window.
@@ -432,6 +437,18 @@ func (w *Window) SetTitle(title string) {
 	defer C.free(unsafe.Pointer(t))
 	C.glfwSetWindowTitle(w.data, t)
 	panicError()
+}
+
+// GetTitle returns the window title encoded as UTF-8.
+//
+// This function may only be called from the main thread.
+func (w *Window) GetTitle() string {
+	title := C.glfwGetWindowTitle(w.data)
+	panicError()
+	if title == nil {
+		return ""
+	}
+	return C.GoString(title)
 }
 
 // SetIcon sets the icon of the specified window. If passed an array of candidate images,

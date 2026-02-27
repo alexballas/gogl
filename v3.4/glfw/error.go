@@ -71,6 +71,15 @@ const (
 	// could not be converted to the requested format. You should ignore the
 	// error or report it to the user, as appropriate.
 	FormatUnavailable ErrorCode = C.GLFW_FORMAT_UNAVAILABLE
+
+	// CursorUnavailable is the error code used when the requested standard
+	// cursor shape is not available.
+	CursorUnavailable ErrorCode = C.GLFW_CURSOR_UNAVAILABLE
+
+	// PlatformUnavailable is the error code used when initialization could not
+	// find a usable platform or a native access call does not match the active
+	// platform.
+	PlatformUnavailable ErrorCode = C.GLFW_PLATFORM_UNAVAILABLE
 )
 
 func (e ErrorCode) String() string {
@@ -99,6 +108,10 @@ func (e ErrorCode) String() string {
 		return "VersionUnavailable"
 	case FormatUnavailable:
 		return "FormatUnavailable"
+	case CursorUnavailable:
+		return "CursorUnavailable"
+	case PlatformUnavailable:
+		return "PlatformUnavailable"
 	default:
 		return fmt.Sprintf("ErrorCode(%d)", e)
 	}

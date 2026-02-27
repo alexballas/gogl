@@ -73,11 +73,16 @@ func main() {
 * Added support for dynamic runtime switching between X11 and Wayland on Linux.
 * Replaced compile-time Wayland icon checking with `glfwGetPlatform()`.
 * Mapped `GLFW_FEATURE_UNAVAILABLE` and `GLFW_FEATURE_UNIMPLEMENTED` to prevent go panics on unsupported platform features.
+* Mapped `GLFW_CURSOR_UNAVAILABLE` and `GLFW_PLATFORM_UNAVAILABLE`.
 * Added function `GetPlatform`.
 * Added function `PlatformSupported`.
+* Added function `InitAllocator`.
+* Added function `InitVulkanLoader`.
+* Added function `Window.GetTitle`.
 * Added hint `MousePassthrough`.
 * Added hint `PositionX`.
 * Added hint `PositionY`.
+* Added hint `ContextNoError`.
 * Added hint `AnglePlatformType`.
 * Added hint `PlatformHint`.
 * Added hint `ScaleFramebuffer`.
@@ -86,8 +91,10 @@ func main() {
 * Added hint `WaylandAppID`.
 * Added hint `WaylandLibdecor`.
 * Added hint `X11XcbVulkanSurface`.
+* Added hint value `AnyPosition`.
 * Added hint value `WaylandPreferLibdecor`.
 * Added hint value `WaylandDisableLibdecor`.
+* Added cursor mode value `CursorCaptured`.
 * Added multiple new standard cursors like `PointingHandCursor`, `ResizeEWCursor`, etc.
 * Added `AnglePlatformType*` hint values for configuring ANGLE rendering backend.
 * Added `Platform` type and values (`AnyPlatform`, `PlatformWin32`, `PlatformCocoa`, `PlatformWayland`, `PlatformX11`, `PlatformNull`).

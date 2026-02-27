@@ -5,6 +5,7 @@ package glfw
 
 GLFWAPI VkResult glfwCreateWindowSurface(VkInstance instance, GLFWwindow* window, const VkAllocationCallbacks* allocator, VkSurfaceKHR* surface);
 GLFWAPI GLFWvkproc glfwGetInstanceProcAddress(VkInstance instance, const char* procname);
+GLFWAPI void glfwInitVulkanLoader(PFN_vkGetInstanceProcAddr loader);
 
 // Helper function for doing raw pointer arithmetic
 static inline const char* getArrayIndex(const char** array, unsigned int index) {
@@ -13,6 +14,10 @@ static inline const char* getArrayIndex(const char** array, unsigned int index) 
 
 void* getVulkanProcAddr() {
 	return glfwGetInstanceProcAddress;
+}
+
+static inline void glfwInitVulkanLoaderBridge(void* loader) {
+	glfwInitVulkanLoader((PFN_vkGetInstanceProcAddr) loader);
 }
 */
 import "C"
@@ -39,6 +44,15 @@ func VulkanSupported() bool {
 // Note that this function does not work the same way as the glfwGetInstanceProcAddress.
 func GetVulkanGetInstanceProcAddress() unsafe.Pointer {
 	return C.getVulkanProcAddr()
+}
+
+// InitVulkanLoader sets the Vulkan loader function for the next call to Init.
+//
+// Pass nil to use GLFW's default dynamic loader behavior.
+//
+// This function must only be called from the main thread.
+func InitVulkanLoader(loader unsafe.Pointer) {
+	C.glfwInitVulkanLoaderBridge(loader)
 }
 
 // GetRequiredInstanceExtensions returns a slice of Vulkan instance extension names required

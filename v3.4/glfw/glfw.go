@@ -1,8 +1,17 @@
 package glfw
 
+//#include <stdint.h>
 //#include <stdlib.h>
 //#define GLFW_INCLUDE_NONE
 //#include "glfw/include/GLFW/glfw3.h"
+//static inline void glfwInitAllocatorBridge(uintptr_t allocate, uintptr_t reallocate, uintptr_t deallocate, void* user) {
+//	GLFWallocator allocator;
+//	allocator.allocate = (GLFWallocatefun) allocate;
+//	allocator.reallocate = (GLFWreallocatefun) reallocate;
+//	allocator.deallocate = (GLFWdeallocatefun) deallocate;
+//	allocator.user = user;
+//	glfwInitAllocator(&allocator);
+//}
 import "C"
 import "unsafe"
 
@@ -34,7 +43,7 @@ const (
 // This function may only be called from the main thread.
 func Init() error {
 	C.glfwInit()
-	return acceptError(APIUnavailable)
+	return acceptError(APIUnavailable, PlatformUnavailable)
 }
 
 // Terminate destroys all remaining windows, frees any allocated resources and
@@ -65,6 +74,54 @@ func Terminate() {
 // This function must only be called from the main thread.
 func InitHint(hint Hint, value int) {
 	C.glfwInitHint(C.int(hint), C.int(value))
+}
+
+// AllocateFunc is a C function pointer used for memory allocation with
+// InitAllocator.
+//
+// This must point to a C function matching GLFWallocatefun and must not point
+// to a Go function.
+type AllocateFunc unsafe.Pointer
+
+// ReallocateFunc is a C function pointer used for memory reallocation with
+// InitAllocator.
+//
+// This must point to a C function matching GLFWreallocatefun and must not
+// point to a Go function.
+type ReallocateFunc unsafe.Pointer
+
+// DeallocateFunc is a C function pointer used for memory deallocation with
+// InitAllocator.
+//
+// This must point to a C function matching GLFWdeallocatefun and must not
+// point to a Go function.
+type DeallocateFunc unsafe.Pointer
+
+// Allocator describes the custom allocator callbacks used by InitAllocator.
+type Allocator struct {
+	Allocate   AllocateFunc
+	Reallocate ReallocateFunc
+	Deallocate DeallocateFunc
+	User       unsafe.Pointer
+}
+
+// InitAllocator sets the allocator for the next call to Init.
+//
+// Passing nil resets GLFW to use the default allocator.
+//
+// This function must only be called from the main thread.
+func InitAllocator(allocator *Allocator) {
+	if allocator == nil {
+		C.glfwInitAllocator(nil)
+	} else {
+		C.glfwInitAllocatorBridge(
+			C.uintptr_t(uintptr(unsafe.Pointer(allocator.Allocate))),
+			C.uintptr_t(uintptr(unsafe.Pointer(allocator.Reallocate))),
+			C.uintptr_t(uintptr(unsafe.Pointer(allocator.Deallocate))),
+			allocator.User,
+		)
+	}
+	panicError()
 }
 
 // GetVersion retrieves the major, minor and revision numbers of the GLFW
