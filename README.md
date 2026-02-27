@@ -17,7 +17,7 @@
 * Go 1.4+ is required on Windows (otherwise you must use MinGW v4.8.1 exactly, see [Go issue 8811](https://github.com/golang/go/issues/8811)).
 
 ```
-go get -u github.com/go-gl/glfw/v3.4/glfw
+go get -u github.com/go-gl/glfw/v3.3/glfw
 ```
 
 ### OpenGL ES
@@ -26,7 +26,7 @@ If your target system only provides an OpenGL ES implementation (true for some A
 You do this by defining the appropriate build tags, e.g.
 
 ```
-go get -u -tags=gles2 github.com/go-gl/glfw/v3.4/glfw
+go get -u -tags=gles2 github.com/go-gl/glfw/v3.3/glfw
 ```
 
 Supported tags are `gles1`, `gles2`, `gles3` and `vulkan`.
@@ -39,7 +39,7 @@ package main
 
 import (
 	"runtime"
-	"github.com/go-gl/glfw/v3.4/glfw"
+	"github.com/go-gl/glfw/v3.3/glfw"
 )
 
 func init() {
@@ -172,7 +172,7 @@ func main() {
 
 
 ### GLFW 3.2 Specfic Changes
-- Easy `go get` installation. GLFW source code is now included in-repo and compiled in so you don't have to build GLFW on your own and distribute shared libraries. The revision of GLFW C library used is listed in [GLFW_C_REVISION.txt](https://github.com/go-gl/glfw/blob/master/v3.4/glfw/GLFW_C_REVISION.txt) file.
+- Easy `go get` installation. GLFW source code is now included in-repo and compiled in so you don't have to build GLFW on your own and distribute shared libraries. The revision of GLFW C library used is listed in [GLFW_C_REVISION.txt](https://github.com/go-gl/glfw/blob/master/v3.3/glfw/GLFW_C_REVISION.txt) file.
 - The error callback is now set internally. Functions return an error with corresponding code and description (do a type assertion to glfw3.Error for accessing the variables) if the error is recoverable. If not a panic will occur.
 
 * Added function `Window.SetSizeLimits`.
