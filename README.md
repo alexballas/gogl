@@ -79,6 +79,7 @@ func main() {
 * Added hint `PositionX`.
 * Added hint `PositionY`.
 * Added hint `AnglePlatformType`.
+* Added hint `PlatformHint`.
 * Added hint `ScaleFramebuffer`.
 * Added hint `Win32KeyboardMenu`.
 * Added hint `Win32ShowDefault`.
@@ -89,7 +90,7 @@ func main() {
 * Added hint value `WaylandDisableLibdecor`.
 * Added multiple new standard cursors like `PointingHandCursor`, `ResizeEWCursor`, etc.
 * Added `AnglePlatformType*` hint values for configuring ANGLE rendering backend.
-* Added `Platform*` types (`PlatformWin32`, `PlatformCocoa`, `PlatformWayland`, `PlatformX11`, `PlatformNull`).
+* Added `Platform` type and values (`AnyPlatform`, `PlatformWin32`, `PlatformCocoa`, `PlatformWayland`, `PlatformX11`, `PlatformNull`).
 
 ### GLFW 3.3 Specific Changes
 - Joystick functions now uses receivers instead of passing the joystick ID as argument.

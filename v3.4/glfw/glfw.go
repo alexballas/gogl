@@ -93,6 +93,21 @@ func GetVersionString() string {
 	return C.GoString(C.glfwGetVersionString())
 }
 
+// GetPlatform returns the currently selected platform.
+func GetPlatform() Platform {
+	ret := Platform(C.glfwGetPlatform())
+	panicError()
+	return ret
+}
+
+// PlatformSupported reports whether support for the specified platform was
+// compiled into this binary.
+func PlatformSupported(platform Platform) bool {
+	ret := glfwbool(C.glfwPlatformSupported(C.int(platform)))
+	panicError()
+	return ret
+}
+
 // GetClipboardString returns the contents of the system clipboard, if it
 // contains or is convertible to a UTF-8 encoded string.
 //

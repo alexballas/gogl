@@ -15,5 +15,6 @@ package glfw
 #include "glfw/src/osmesa_context.c"
 
 extern int glfwGetPlatform(void);
+extern int glfwPlatformSupported(int platform);
 */
 import "C"

@@ -52,11 +52,18 @@ func (w *windowList) get(wnd *C.GLFWwindow) *Window {
 // its creation.
 type Hint int
 
+// Platform identifies a supported GLFW platform.
+type Platform int
+
 // Init related hints. (Use with glfw.InitHint)
 const (
-	JoystickHatButtons  Hint = C.GLFW_JOYSTICK_HAT_BUTTONS  // Specifies whether to also expose joystick hats as buttons, for compatibility with earlier versions of GLFW that did not have glfwGetJoystickHats.
-	CocoaChdirResources Hint = C.GLFW_COCOA_CHDIR_RESOURCES // Specifies whether to set the current directory to the application to the Contents/Resources subdirectory of the application's bundle, if present.
-	CocoaMenubar        Hint = C.GLFW_COCOA_MENUBAR         // Specifies whether to create a basic menu bar, either from a nib or manually, when the first window is created, which is when AppKit is initialized.
+	JoystickHatButtons  Hint = C.GLFW_JOYSTICK_HAT_BUTTONS   // Specifies whether to also expose joystick hats as buttons, for compatibility with earlier versions of GLFW that did not have glfwGetJoystickHats.
+	AnglePlatformType   Hint = C.GLFW_ANGLE_PLATFORM_TYPE    // Specifies the platform type (rendering backend) to request when using OpenGL ES and EGL via ANGLE.
+	PlatformHint        Hint = C.GLFW_PLATFORM               // Specifies the platform to use for windowing and input.
+	CocoaChdirResources Hint = C.GLFW_COCOA_CHDIR_RESOURCES  // Specifies whether to set the current directory to the application to the Contents/Resources subdirectory of the application's bundle, if present.
+	CocoaMenubar        Hint = C.GLFW_COCOA_MENUBAR          // Specifies whether to create a basic menu bar, either from a nib or manually, when the first window is created, which is when AppKit is initialized.
+	X11XcbVulkanSurface Hint = C.GLFW_X11_XCB_VULKAN_SURFACE // Specifies whether to use XCB for Vulkan surface creation.
+	WaylandLibdecor     Hint = C.GLFW_WAYLAND_LIBDECOR       // Specifies whether to use libdecor for Wayland window decorations.
 )
 
 // Window related hints/attributes.
@@ -77,6 +84,8 @@ const (
 	MousePassthrough       Hint = C.GLFW_MOUSE_PASSTHROUGH       // Specifies whether the window is transparent to mouse input, letting any mouse events pass through to whatever window is behind it.
 	PositionX              Hint = C.GLFW_POSITION_X              // Specifies the desired x-coordinate of the upper-left corner of the content area of the window.
 	PositionY              Hint = C.GLFW_POSITION_Y              // Specifies the desired y-coordinate of the upper-left corner of the content area of the window.
+	Win32KeyboardMenu      Hint = C.GLFW_WIN32_KEYBOARD_MENU     // Specifies whether to let Alt+Space open the window menu on Win32.
+	Win32ShowDefault       Hint = C.GLFW_WIN32_SHOWDEFAULT       // Specifies the window show state for Win32.
 )
 
 // Context related hints.
@@ -90,7 +99,6 @@ const (
 	OpenGLDebugContext      Hint = C.GLFW_OPENGL_DEBUG_CONTEXT     // Specifies whether to create a debug OpenGL context, which may have additional error and performance issue reporting functionality. If OpenGL ES is requested, this hint is ignored.
 	OpenGLProfile           Hint = C.GLFW_OPENGL_PROFILE           // Specifies which OpenGL profile to create the context for. Hard constraint.
 	ContextCreationAPI      Hint = C.GLFW_CONTEXT_CREATION_API     // Specifies which context creation API to use to create the context.
-	AnglePlatformType       Hint = C.GLFW_ANGLE_PLATFORM_TYPE      // Specifies the platform type (rendering backend) to request when using OpenGL ES and EGL via ANGLE.
 )
 
 // Framebuffer related hints.
@@ -122,6 +130,7 @@ const (
 	CocoaFrameNAME  Hint = C.GLFW_COCOA_FRAME_NAME  // Specifies the UTF-8 encoded name to use for autosaving the window frame, or if empty disables frame autosaving for the window.
 	X11ClassName    Hint = C.GLFW_X11_CLASS_NAME    // Specifies the desired ASCII encoded class parts of the ICCCM WM_CLASS window property.nd instance parts of the ICCCM WM_CLASS window property.
 	X11InstanceName Hint = C.GLFW_X11_INSTANCE_NAME // Specifies the desired ASCII encoded instance parts of the ICCCM WM_CLASS window property.nd instance parts of the ICCCM WM_CLASS window property.
+	WaylandAppID    Hint = C.GLFW_WAYLAND_APP_ID    // Specifies the UTF-8 encoded app_id to set for the Wayland toplevel.
 )
 
 // Values for the ClientAPI hint.
@@ -136,6 +145,33 @@ const (
 	NativeContextAPI int = C.GLFW_NATIVE_CONTEXT_API
 	EGLContextAPI    int = C.GLFW_EGL_CONTEXT_API
 	OSMesaContextAPI int = C.GLFW_OSMESA_CONTEXT_API
+)
+
+// Values for AnglePlatformType init hint.
+const (
+	AnglePlatformTypeNone     int = C.GLFW_ANGLE_PLATFORM_TYPE_NONE
+	AnglePlatformTypeOpenGL   int = C.GLFW_ANGLE_PLATFORM_TYPE_OPENGL
+	AnglePlatformTypeOpenGLES int = C.GLFW_ANGLE_PLATFORM_TYPE_OPENGLES
+	AnglePlatformTypeD3D9     int = C.GLFW_ANGLE_PLATFORM_TYPE_D3D9
+	AnglePlatformTypeD3D11    int = C.GLFW_ANGLE_PLATFORM_TYPE_D3D11
+	AnglePlatformTypeVulkan   int = C.GLFW_ANGLE_PLATFORM_TYPE_VULKAN
+	AnglePlatformTypeMetal    int = C.GLFW_ANGLE_PLATFORM_TYPE_METAL
+)
+
+// Values for WaylandLibdecor init hint.
+const (
+	WaylandPreferLibdecor  int = C.GLFW_WAYLAND_PREFER_LIBDECOR
+	WaylandDisableLibdecor int = C.GLFW_WAYLAND_DISABLE_LIBDECOR
+)
+
+// Platform values.
+const (
+	AnyPlatform     Platform = C.GLFW_ANY_PLATFORM
+	PlatformWin32   Platform = C.GLFW_PLATFORM_WIN32
+	PlatformCocoa   Platform = C.GLFW_PLATFORM_COCOA
+	PlatformWayland Platform = C.GLFW_PLATFORM_WAYLAND
+	PlatformX11     Platform = C.GLFW_PLATFORM_X11
+	PlatformNull    Platform = C.GLFW_PLATFORM_NULL
 )
 
 // Values for the ContextRobustness hint.
