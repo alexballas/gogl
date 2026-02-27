@@ -29,6 +29,9 @@ const (
 )
 
 const (
+	// NoError indicates that no GLFW error has occurred.
+	NoError ErrorCode = C.GLFW_NO_ERROR
+
 	// APIUnavailable is the error code used when GLFW could not find support
 	// for the requested client API on the system.
 	//
@@ -84,6 +87,8 @@ const (
 
 func (e ErrorCode) String() string {
 	switch e {
+	case NoError:
+		return "NoError"
 	case notInitialized:
 		return "NotInitialized"
 	case noCurrentContext:
@@ -149,6 +154,22 @@ func goErrorCB(code C.int, desc *C.char) {
 // Set the glfw callback internally
 func init() {
 	C.glfwSetErrorCallbackCB()
+}
+
+// GetError returns and clears the last GLFW error for the calling thread.
+//
+// If no error has occurred since the last call, this returns NoError and an
+// empty description.
+func GetError() (code ErrorCode, description string) {
+	var desc *C.char
+	code = ErrorCode(C.glfwGetError(&desc))
+	if code != NoError {
+		_ = fetchError()
+	}
+	if desc != nil {
+		description = C.GoString(desc)
+	}
+	return code, description
 }
 
 // flushErrors is called by Terminate before it actually calls C.glfwTerminate,

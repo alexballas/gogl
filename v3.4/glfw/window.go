@@ -440,6 +440,7 @@ func (w *Window) SetTitle(title string) {
 }
 
 // GetTitle returns the window title encoded as UTF-8.
+// The returned Go string is a copy, so it remains valid after this call.
 //
 // This function may only be called from the main thread.
 func (w *Window) GetTitle() string {

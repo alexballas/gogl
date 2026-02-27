@@ -70,6 +70,7 @@ func main() {
 
 ### GLFW 3.4 Specific Changes
 
+* This section is cumulative for the v3.4 branch and includes changes from multiple commits.
 * Added support for dynamic runtime switching between X11 and Wayland on Linux.
 * Replaced compile-time Wayland icon checking with `glfwGetPlatform()`.
 * Mapped `GLFW_FEATURE_UNAVAILABLE` and `GLFW_FEATURE_UNIMPLEMENTED` to prevent go panics on unsupported platform features.
@@ -78,6 +79,8 @@ func main() {
 * Added function `PlatformSupported`.
 * Added function `InitAllocator`.
 * Added function `InitVulkanLoader`.
+* Added function `GetError`.
+* Added function `GetPhysicalDevicePresentationSupport`.
 * Added function `Window.GetTitle`.
 * Added hint `MousePassthrough`.
 * Added hint `PositionX`.
@@ -95,6 +98,7 @@ func main() {
 * Added hint value `WaylandPreferLibdecor`.
 * Added hint value `WaylandDisableLibdecor`.
 * Added cursor mode value `CursorCaptured`.
+* `GLFW_UNLIMITED_MOUSE_BUTTONS` is not mapped because it is not present in the vendored GLFW C revision used by this package.
 * Added multiple new standard cursors like `PointingHandCursor`, `ResizeEWCursor`, etc.
 * Added `AnglePlatformType*` hint values for configuring ANGLE rendering backend.
 * Added `Platform` type and values (`AnyPlatform`, `PlatformWin32`, `PlatformCocoa`, `PlatformWayland`, `PlatformX11`, `PlatformNull`).

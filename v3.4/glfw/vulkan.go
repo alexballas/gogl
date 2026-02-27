@@ -6,6 +6,7 @@ package glfw
 GLFWAPI VkResult glfwCreateWindowSurface(VkInstance instance, GLFWwindow* window, const VkAllocationCallbacks* allocator, VkSurfaceKHR* surface);
 GLFWAPI GLFWvkproc glfwGetInstanceProcAddress(VkInstance instance, const char* procname);
 GLFWAPI void glfwInitVulkanLoader(PFN_vkGetInstanceProcAddr loader);
+GLFWAPI int glfwGetPhysicalDevicePresentationSupport(VkInstance instance, VkPhysicalDevice device, uint32_t queuefamily);
 
 // Helper function for doing raw pointer arithmetic
 static inline const char* getArrayIndex(const char** array, unsigned int index) {
@@ -53,6 +54,38 @@ func GetVulkanGetInstanceProcAddress() unsafe.Pointer {
 // This function must only be called from the main thread.
 func InitVulkanLoader(loader unsafe.Pointer) {
 	C.glfwInitVulkanLoaderBridge(loader)
+	panicError()
+}
+
+// GetPhysicalDevicePresentationSupport reports whether a queue family of a
+// physical device supports presentation to the active GLFW platform.
+func GetPhysicalDevicePresentationSupport(instance, device interface{}, queueFamily uint32) (supported bool, err error) {
+	if instance == nil {
+		return false, errors.New("vulkan: instance is nil")
+	}
+	instanceValue := reflect.ValueOf(instance)
+	if instanceValue.Kind() != reflect.Ptr {
+		return false, fmt.Errorf("vulkan: instance is not a VkInstance (expected kind Ptr, got %s)", instanceValue.Kind())
+	}
+
+	if device == nil {
+		return false, errors.New("vulkan: device is nil")
+	}
+	deviceValue := reflect.ValueOf(device)
+	if deviceValue.Kind() != reflect.Ptr {
+		return false, fmt.Errorf("vulkan: device is not a VkPhysicalDevice (expected kind Ptr, got %s)", deviceValue.Kind())
+	}
+
+	supported = glfwbool(C.glfwGetPhysicalDevicePresentationSupport(
+		(C.VkInstance)(unsafe.Pointer(instanceValue.Pointer())),
+		(C.VkPhysicalDevice)(unsafe.Pointer(deviceValue.Pointer())),
+		C.uint32_t(queueFamily),
+	))
+	if err := acceptError(APIUnavailable); err != nil {
+		return false, err
+	}
+	panicError()
+	return supported, nil
 }
 
 // GetRequiredInstanceExtensions returns a slice of Vulkan instance extension names required
