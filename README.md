@@ -86,9 +86,11 @@ func main() {
 * Added function `GetError`.
 * Added function `GetPhysicalDevicePresentationSupport`.
 * Added function `Window.GetTitle`.
+* Added function `Window.GetCocoaView`.
 * Added hint `MousePassthrough`.
 * Added hint `PositionX`.
 * Added hint `PositionY`.
+* Added hint `ContextDebug`.
 * Added hint `ContextNoError`.
 * Added hint `AnglePlatformType`.
 * Added hint `PlatformHint`.
