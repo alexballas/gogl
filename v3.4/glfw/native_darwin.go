@@ -8,6 +8,9 @@ package glfw
 
 // workaround wrappers needed due to a cgo and/or LLVM bug.
 // See: https://github.com/go-gl/glfw/issues/136
+void *workaround_glfwGetCocoaView(GLFWwindow *w) {
+	return (void *)glfwGetCocoaView(w);
+}
 void *workaround_glfwGetCocoaWindow(GLFWwindow *w) {
 	return (void *)glfwGetCocoaWindow(w);
 }
@@ -21,6 +24,13 @@ import "unsafe"
 // GetCocoaMonitor returns the CGDirectDisplayID of the monitor.
 func (m *Monitor) GetCocoaMonitor() uintptr {
 	ret := uintptr(C.glfwGetCocoaMonitor(m.data))
+	panicError()
+	return ret
+}
+
+// GetCocoaView returns the NSView of the window.
+func (w *Window) GetCocoaView() unsafe.Pointer {
+	ret := C.workaround_glfwGetCocoaView(w.data)
 	panicError()
 	return ret
 }
