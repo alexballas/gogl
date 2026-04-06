@@ -2,7 +2,7 @@
 [![Static Analysis](https://github.com/go-gl/glfw/actions/workflows/analysis.yml/badge.svg)](https://github.com/go-gl/glfw/actions/workflows/analysis.yml)
 [![GoDoc](https://godoc.org/github.com/go-gl/glfw/v3.4/glfw?status.svg)](https://godoc.org/github.com/go-gl/glfw/v3.4/glfw)
 
-# GLFW 3.4 for Go 
+# GLFW 3.4 for Go
 
 ## Installation
 
@@ -173,8 +173,8 @@ func main() {
 * `GetClipboardString` No longer returns an error.
 
 
-### GLFW 3.2 Specfic Changes
-- Easy `go get` installation. GLFW source code is now included in-repo and compiled in so you don't have to build GLFW on your own and distribute shared libraries. The revision of GLFW C library used is listed in [GLFW_C_REVISION.txt](https://github.com/go-gl/glfw/blob/master/v3.4/glfw/GLFW_C_REVISION.txt) file.
+### GLFW 3.2 Specific Changes
+- Easy `go get` installation. GLFW source code is now included in-repo and compiled in so you don't have to build GLFW on your own and distribute shared libraries. The revision of GLFW C library used is listed in [GLFW_C_REVISION.txt](https://github.com/go-gl/glfw/blob/master/v3.2/glfw/GLFW_C_REVISION.txt) file.
 - The error callback is now set internally. Functions return an error with corresponding code and description (do a type assertion to glfw3.Error for accessing the variables) if the error is recoverable. If not a panic will occur.
 
 * Added function `Window.SetSizeLimits`.
@@ -195,7 +195,7 @@ func main() {
 * Added hint `EGLContextAPI`.
 
 
-### GLFW 3.1 Specfic Changes
+### GLFW 3.1 Specific Changes
 * Added type `Cursor`.
 * Added function `Window.SetDropCallback`.
 * Added function `Window.SetCharModsCallback`.
