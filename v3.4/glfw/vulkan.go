@@ -59,7 +59,7 @@ func InitVulkanLoader(loader unsafe.Pointer) {
 
 // GetPhysicalDevicePresentationSupport reports whether a queue family of a
 // physical device supports presentation to the active GLFW platform.
-func GetPhysicalDevicePresentationSupport(instance, device interface{}, queueFamily uint32) (supported bool, err error) {
+func GetPhysicalDevicePresentationSupport(instance, device interface{}, queueFamily uint32) (supported bool, _ error) {
 	if instance == nil {
 		return false, errors.New("vulkan: instance is nil")
 	}
@@ -81,8 +81,8 @@ func GetPhysicalDevicePresentationSupport(instance, device interface{}, queueFam
 		(C.VkPhysicalDevice)(unsafe.Pointer(deviceValue.Pointer())),
 		C.uint32_t(queueFamily),
 	))
-	if acceptErr := acceptError(APIUnavailable); acceptErr != nil {
-		return false, acceptErr
+	if err := acceptError(APIUnavailable); err != nil {
+		return false, err
 	}
 	panicError()
 	return supported, nil
@@ -113,7 +113,7 @@ func (window *Window) GetRequiredInstanceExtensions() []string {
 }
 
 // CreateWindowSurface creates a Vulkan surface for this window.
-func (window *Window) CreateWindowSurface(instance interface{}, allocCallbacks unsafe.Pointer) (surface uintptr, err error) {
+func (window *Window) CreateWindowSurface(instance interface{}, allocCallbacks unsafe.Pointer) (surface uintptr, _ error) {
 	if instance == nil {
 		return 0, errors.New("vulkan: instance is nil")
 	}
